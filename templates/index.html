@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        }
+        th, td {
+            padding: 5px;
+        }
+        th {
+            text-align: left;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <title>Connected Devices</title>
+</head>
+<body>
+    <div class="container">
+        <table style="width: 100%">
+            <tr>
+                <th >Mac Address</th>
+                <th>IP Address</th>
+                <th>Hostname</th>
+            </tr>
+            {% for k, v in device_dict.items() %}
+            <tr>
+                <td>{{ k }}</td>
+                <td>{{ v['IP Address'] }}</td>
+                <td>{{ v['Hostname'] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>
