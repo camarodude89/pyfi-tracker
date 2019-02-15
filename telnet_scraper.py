@@ -2,6 +2,9 @@ import telnetlib
 import keyring
 import re
 
+from entities import Devices, DeviceOwner, DeviceConnectionLog,\
+    Base, Session, engine
+
 
 def start_telnet_session(gateway_ip='192.168.0.1'):
     """Returns a Telnet object ready for reading the device_list file"""
