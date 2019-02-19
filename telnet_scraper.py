@@ -2,9 +2,6 @@ import telnetlib
 import keyring
 import re
 
-from entities import Devices, DeviceOwner, DeviceConnectionLog,\
-    Base, Session, engine
-
 
 def start_telnet_session(gateway_ip='192.168.0.1'):
     """Returns a Telnet object ready for reading the device_list file"""
@@ -24,7 +21,7 @@ def start_telnet_session(gateway_ip='192.168.0.1'):
     return tn
 
 
-def connected_devices(tn=None):
+def get_devices(tn=None):
     """Returns a dictionary of the connected devices parsed from the device_list file"""
     tn = tn or start_telnet_session()
     tn.write('cat device_list\r\n'.encode())
@@ -41,10 +38,7 @@ def connected_devices(tn=None):
         mac_address = device_data[0]
         ip_address = device_data[1]
         hostname = device_data[2]
-        connected = False
-        if device_data[7] == '1':
-            connected = True
-        if connected:
-            device_dict[mac_address] = {"IP Address": ip_address, "Hostname": hostname}
+        connected = False if device_data[7] == '0' else True
+        device_dict[mac_address] = {"IP Address": ip_address, "Hostname": hostname, "Connected": connected}
 
     return device_dict

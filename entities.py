@@ -9,8 +9,8 @@ Session = sessionmaker(bind=engine)
 Base = declarative_base()
 
 
-class Devices(Base):
-    __tablename__ = 'devices'
+class Device(Base):
+    __tablename__ = 'device'
 
     mac_address = Column(String, primary_key=True)
     ip_address = Column(String)
@@ -19,7 +19,7 @@ class Devices(Base):
     connected = Column(Boolean)
     watched = Column(Boolean)
 
-    def __init__(self, mac_address, ip_address, hostname, nickname,
+    def __init__(self, mac_address=None, ip_address=None, hostname=None, nickname=None,
                  connected=False, watched=False):
         self.mac_address = mac_address
         self.ip_address = ip_address
@@ -32,7 +32,7 @@ class Devices(Base):
 class DeviceConnectionLog(Base):
     __tablename__ = 'device_connection_log'
 
-    mac_address = Column(String)
+    mac_address = Column(String, primary_key=True)
     connected_timeframe = Column(ARRAY(TIMESTAMP))
 
     def __init__(self, mac_address, connected_timeframe):
