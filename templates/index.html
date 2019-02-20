@@ -24,11 +24,11 @@
                 <th>IP Address</th>
                 <th>Hostname</th>
             </tr>
-            {% for k, v in device_dict.items() %}
+            {% for device in connected_devices %}
             <tr>
-                <td>{{ k }}</td>
-                <td>{{ v['IP Address'] }}</td>
-                <td>{{ v['Hostname'] }}</td>
+                <td>{{ device.mac_address }}</td>
+                <td>{{ device.ip_address }}</td>
+                <td>{{ device.hostname }}</td>
             </tr>
             {% endfor %}
         </table>

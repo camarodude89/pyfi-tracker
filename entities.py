@@ -1,9 +1,14 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import Column, String, Boolean, ARRAY, TIMESTAMP
+from sqlalchemy import Column, String, Boolean, ARRAY, TIMESTAMP, Integer
+import keyring
 
-engine = create_engine('postgresql://pyfiuser:pyfipsql@localhost:5432/pyfi')
+
+psql_user = keyring.get_password('postgres', 'username')
+psql_pass = keyring.get_password('postgres', psql_user)
+
+engine = create_engine(f'postgresql://{psql_user}:{psql_pass}@localhost:5432/pyfi')
 Session = sessionmaker(bind=engine)
 
 Base = declarative_base()
@@ -32,7 +37,8 @@ class Device(Base):
 class DeviceConnectionLog(Base):
     __tablename__ = 'device_connection_log'
 
-    mac_address = Column(String, primary_key=True)
+    id = Column(Integer, primary_key=True)
+    mac_address = Column(String)
     connected_timeframe = Column(ARRAY(TIMESTAMP))
 
     def __init__(self, mac_address, connected_timeframe):
