@@ -22,13 +22,17 @@
             <tr>
                 <th >Mac Address</th>
                 <th>IP Address</th>
-                <th>Hostname</th>
+                <th>Name</th>
             </tr>
             {% for device in connected_devices %}
             <tr>
                 <td>{{ device.mac_address }}</td>
                 <td>{{ device.ip_address }}</td>
+                {% if device.nickname is none %}
                 <td>{{ device.hostname }}</td>
+                {% else %}
+                <td>{{ device.nickname }}</td>
+                {% endif %}
             </tr>
             {% endfor %}
         </table>
