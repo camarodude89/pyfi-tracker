@@ -1,5 +1,5 @@
 import telnetlib
-import keyring
+from auth import TELNET_USER, TELNET_PASS
 import re
 
 
@@ -7,10 +7,9 @@ def start_telnet_session(gateway_ip='192.168.0.1'):
     """Returns a Telnet object ready for reading the device_list file"""
     tn = telnetlib.Telnet(gateway_ip)
     tn.read_until(b': ')
-    username = keyring.get_password('CenturyLink', 'username')
-    tn.write(f'{username}\r\n'.encode())
+    tn.write(f'{TELNET_USER}\r\n'.encode())
     tn.read_until(b': ')
-    tn.write(f'{keyring.get_password("CenturyLink", username)}\r\n'.encode())
+    tn.write(f'{TELNET_PASS}\r\n'.encode())
 
     # Starts busybox session and navigates to the data directory making ready for next command
     tn.read_until(b'\r\n >')
