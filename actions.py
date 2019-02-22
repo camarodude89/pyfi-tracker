@@ -41,7 +41,7 @@ class DatabaseActions:
                     send_pbnotification(title='PyFi Alert', msg=msg)
                 else:
                     con_log_entry = self.session.query(DeviceConnectionLog).filter(
-                        DeviceConnectionLog.mac_address == k, DeviceConnectionLog.disconnected is None).scalar()
+                        DeviceConnectionLog.mac_address == k, DeviceConnectionLog.disconnected.is_(None)).scalar()
                     con_log_entry.disconnected = current_time
                     msg = f'{db_device.hostname if db_device.nickname is None else db_device.nickname} disconnected.'
                     send_pbnotification(title='PyFi Alert', msg=msg)
