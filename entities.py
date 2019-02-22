@@ -2,13 +2,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Column, String, Boolean, DateTime, Integer
-import keyring
+from auth import PSQL_USER, PSQL_PASS
 
-
-psql_user = keyring.get_password('postgres', 'username')
-psql_pass = keyring.get_password('postgres', psql_user)
-
-engine = create_engine(f'postgresql://{psql_user}:{psql_pass}@localhost:5432/pyfi')
+engine = create_engine(f'postgresql://{PSQL_USER}:{PSQL_PASS}@localhost:5432/pyfi')
 Session = sessionmaker(bind=engine)
 
 Base = declarative_base()
