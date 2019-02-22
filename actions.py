@@ -2,6 +2,7 @@ from entities import Device, DeviceOwner, DeviceConnectionLog,\
     Base, Session, engine
 from sqlalchemy import exists
 from datetime import datetime
+from notifications import send_pbnotification
 
 
 class DatabaseActions:
@@ -36,10 +37,14 @@ class DatabaseActions:
                     con_log_entry = DeviceConnectionLog(mac_address=db_device.mac_address,
                                                         connected=current_time)
                     self.session.add(con_log_entry)
+                    msg = f'{db_device.hostname if db_device.nickname is None else db_device.nickname} connected.'
+                    send_pbnotification(title='PyFi Alert', msg=msg)
                 else:
                     con_log_entry = self.session.query(DeviceConnectionLog).filter(
-                        DeviceConnectionLog.mac_address == k and DeviceConnectionLog.disconnected is None).scalar()
+                        DeviceConnectionLog.mac_address == k, DeviceConnectionLog.disconnected is None).scalar()
                     con_log_entry.disconnected = current_time
+                    msg = f'{db_device.hostname if db_device.nickname is None else db_device.nickname} disconnected.'
+                    send_pbnotification(title='PyFi Alert', msg=msg)
 
         self.session.commit()
 
