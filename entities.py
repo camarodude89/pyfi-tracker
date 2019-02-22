@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import Column, String, Boolean, ARRAY, TIMESTAMP, Integer
+from sqlalchemy import Column, String, Boolean, ARRAY, DateTime, Integer
 import keyring
 
 
@@ -39,11 +39,13 @@ class DeviceConnectionLog(Base):
 
     id = Column(Integer, primary_key=True)
     mac_address = Column(String)
-    connected_timeframe = Column(ARRAY(TIMESTAMP))
+    connected = Column(DateTime)
+    disconnected = Column(DateTime)
 
-    def __init__(self, mac_address, connected_timeframe):
+    def __init__(self, mac_address=None, connected=None, disconnected=None):
         self.mac_address = mac_address
-        self.connected_timeframe = connected_timeframe
+        self.connected = connected
+        self.disconnected = disconnected
 
 
 class DeviceOwner(Base):
@@ -54,5 +56,5 @@ class DeviceOwner(Base):
 
     def __index__(self, mac_address, owner):
         self.mac_address = mac_address
-        self.owner
+        self.owner = owner
 

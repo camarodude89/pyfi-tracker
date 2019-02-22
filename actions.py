@@ -32,18 +32,24 @@ class DatabaseActions:
                 db_device.connected = cur_con_status
 
                 # update the device_connection_log for the device
+                if db_device.connected:
+                    con_log_entry = DeviceConnectionLog(mac_address=db_device.mac_address,
+                                                        connected=current_time)
+                    self.session.add(con_log_entry)
+                else:
+                    con_log_entry = self.session.query(DeviceConnectionLog).filter(
+                        DeviceConnectionLog.mac_address == k and DeviceConnectionLog.disconnected is None).scalar()
+                    con_log_entry.disconnected = current_time
 
         self.session.commit()
-        self.session.close()
 
-    def populate_databases(self, devices_dict):
+    def populate_device_db(self, devices_dict):
         for k, v in devices_dict.items():
             mac_address = k
             ip_address = v['IP Address']
             hostname = v['Hostname']
-            connected = v['Connected']
             device = Device(mac_address=mac_address, ip_address=ip_address,
-                            hostname=hostname, connected=connected)
+                            hostname=hostname, connected=False)
             self.session.add(device)
         self.session.commit()
         self.session.close()
