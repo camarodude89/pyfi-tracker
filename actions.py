@@ -31,10 +31,9 @@ class DatabaseActions:
             cur_con_status = v['Connected']
             if prev_con_status != cur_con_status:
                 db_device.connected = cur_con_status
-
                 # update the device_connection_log for the device
                 if db_device.connected:
-                    con_log_entry = DeviceConnectionLog(mac_address=db_device.mac_address,
+                    con_log_entry = DeviceConnectionLog(mac_address=k,
                                                         connected=current_time)
                     self.session.add(con_log_entry)
                     msg = f'{db_device.hostname if db_device.nickname is None else db_device.nickname} connected.'
@@ -42,6 +41,8 @@ class DatabaseActions:
                 else:
                     con_log_entry = self.session.query(DeviceConnectionLog).filter(
                         DeviceConnectionLog.mac_address == k, DeviceConnectionLog.disconnected.is_(None)).scalar()
+                    if con_log_entry is None:
+                        continue
                     con_log_entry.disconnected = current_time
                     msg = f'{db_device.hostname if db_device.nickname is None else db_device.nickname} disconnected.'
                     send_pbnotification(title='PyFi Alert', msg=msg)
@@ -61,3 +62,8 @@ class DatabaseActions:
 
     def query_connected_devices(self):
         return self.session.query(Device).filter(Device.connected.is_(True)).all()
+
+    def test(self):
+        from telnet_scraper import start_telnet_session, get_devices
+        device_dict = get_devices(start_telnet_session())
+        self.process_device_dict(device_dict)
