@@ -1,6 +1,6 @@
 from entities import Device, DeviceOwner, DeviceConnectionLog,\
     Base, Session, engine
-from sqlalchemy import exists
+from sqlalchemy import exists, and_
 from datetime import datetime
 from notifications import PBNotification
 
@@ -34,6 +34,12 @@ class DatabaseActions:
                 db_device.connected = cur_con_status
                 # update the device_connection_log for the device
                 if db_device.connected:
+                    con_log_entry_exists = self.session.query(
+                        exists().where(and_(DeviceConnectionLog.mac_address == k,
+                                            DeviceConnectionLog.connected.isnot(None),
+                                            DeviceConnectionLog.disconnected.is_(None)))).scalar()
+                    if con_log_entry_exists:
+                        continue
                     con_log_entry = DeviceConnectionLog(mac_address=k,
                                                         connected=current_time)
                     self.session.add(con_log_entry)
