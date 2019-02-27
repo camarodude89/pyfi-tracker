@@ -2,7 +2,7 @@ from entities import Device, DeviceOwner, DeviceConnectionLog,\
     Base, Session, engine
 from sqlalchemy import exists
 from datetime import datetime
-from notifications import send_pbnotification
+from notifications import PBNotification
 
 
 class DatabaseActions:
@@ -13,6 +13,7 @@ class DatabaseActions:
 
     def process_device_dict(self, devices_dict):
         current_time = datetime.now()
+        pb_notification = PBNotification()
         for k, v in devices_dict.items():
             # checks to see if any new devices have connected, if so add them
             device_exists = self.session.query(exists().where(Device.mac_address == k)).scalar()
@@ -36,17 +37,17 @@ class DatabaseActions:
                     con_log_entry = DeviceConnectionLog(mac_address=k,
                                                         connected=current_time)
                     self.session.add(con_log_entry)
-                    msg = f'{db_device.hostname if db_device.nickname is None else db_device.nickname} connected.'
-                    send_pbnotification(title='PyFi Alert', msg=msg)
+                    device_name = db_device.hostname if db_device.nickname is None else db_device.nickname
+                    pb_notification.add_connected_device(device_name)
                 else:
                     con_log_entry = self.session.query(DeviceConnectionLog).filter(
                         DeviceConnectionLog.mac_address == k, DeviceConnectionLog.disconnected.is_(None)).scalar()
                     if con_log_entry is None:
                         continue
                     con_log_entry.disconnected = current_time
-                    msg = f'{db_device.hostname if db_device.nickname is None else db_device.nickname} disconnected.'
-                    send_pbnotification(title='PyFi Alert', msg=msg)
-
+                    device_name = db_device.hostname if db_device.nickname is None else db_device.nickname
+                    pb_notification.add_disconnected_device(device_name)
+        pb_notification.send_notification()
         self.session.commit()
 
     def populate_device_db(self, devices_dict):
