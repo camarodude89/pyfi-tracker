@@ -6,7 +6,7 @@ PyFi-Tracker gathers information about devices connected to the occupied LAN. Th
 gathering this information is what can be inferred from it. Such as how long devices are connected to
 the network, visualizing their behavior (how often they connected/disconnected from the network), and
 more importantly, inferring when people leave/arrive at home. Determining when someone has gotten home
-can be done fairly easily depending on which device is being monitored. Smartphones seems to be the
+can be done fairly easily depending on which device is being monitored. Smartphones seem to be the
 best indicators of bodily presence at home. Life360 is an option for more accurate, all encompassing
 indicators of when someone has left/arrived at home, but not everyone wants to or is willing to share
 their GPS data at all times. So this could be used as an alternative method.

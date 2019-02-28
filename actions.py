@@ -43,16 +43,18 @@ class DatabaseActions:
                     con_log_entry = DeviceConnectionLog(mac_address=k,
                                                         connected=current_time)
                     self.session.add(con_log_entry)
-                    device_name = db_device.hostname if db_device.nickname is None else db_device.nickname
-                    pb_notification.add_connected_device(device_name)
+                    if db_device.watched:
+                        device_name = db_device.hostname if db_device.nickname is None else db_device.nickname
+                        pb_notification.add_connected_device(device_name)
                 else:
                     con_log_entry = self.session.query(DeviceConnectionLog).filter(
                         DeviceConnectionLog.mac_address == k, DeviceConnectionLog.disconnected.is_(None)).scalar()
                     if con_log_entry is None:
                         continue
                     con_log_entry.disconnected = current_time
-                    device_name = db_device.hostname if db_device.nickname is None else db_device.nickname
-                    pb_notification.add_disconnected_device(device_name)
+                    if db_device.watched:
+                        device_name = db_device.hostname if db_device.nickname is None else db_device.nickname
+                        pb_notification.add_disconnected_device(device_name)
         pb_notification.send_notification()
         self.session.commit()
 
