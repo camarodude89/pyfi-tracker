@@ -1,6 +1,6 @@
 from entities import Device, DeviceOwner, DeviceConnectionLog,\
     Base, Session, engine
-from sqlalchemy import exists, and_
+from sqlalchemy import exists, and_, not_
 from datetime import datetime
 from notifications import PBNotification
 
@@ -69,8 +69,12 @@ class DatabaseActions:
         self.session.commit()
         self.session.close()
 
-    def query_connected_devices(self):
-        return self.session.query(Device).filter(Device.connected.is_(True)).all()
+    def query_connected_devices(self, ignore_device_list=None):
+        if ignore_device_list:
+            return self.session.query(Device).order_by(Device.nickname).filter(
+                Device.connected.is_(True), not_(Device.mac_address.in_(ignore_device_list))
+            ).all()
+        return self.session.query(Device).order_by(Device.nickname).filter(Device.connected.is_(True)).all()
 
     def test(self):
         from telnet_scraper import start_telnet_session, get_devices

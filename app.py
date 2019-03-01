@@ -1,16 +1,22 @@
 from flask import Flask, render_template
+from flask_socketio import SocketIO
 from threading import Thread
 import time
 import telnet_scraper
 from actions import DatabaseActions
 
+SERVER_MAC_ADDRESS = '70:18:8b:ae:e3:6b'
+
 app = Flask(__name__)
+socketio = SocketIO(app)
 db_actions = DatabaseActions()
 
 @app.route('/')
 def show_table():
     return render_template('index.html',
-                           connected_devices=db_actions.query_connected_devices())
+                           connected_devices=db_actions.query_connected_devices(
+                               ignore_device_list=[SERVER_MAC_ADDRESS]
+                           ))
 
 
 def loop_device_scan():
@@ -24,6 +30,6 @@ def loop_device_scan():
 if __name__ == '__main__':
     process = Thread(target=loop_device_scan)
     process.start()
-    app.run(host='0.0.0.0', debug=True, port=8000)
+    socketio.run(app=app, host='0.0.0.0', debug=True, port=8000)
 
 
