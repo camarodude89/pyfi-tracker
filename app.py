@@ -14,9 +14,7 @@ db_actions = DatabaseActions()
 @app.route('/')
 def show_table():
     return render_template('index.html',
-                           connected_devices=db_actions.query_connected_devices(
-                               ignore_device_list=[SERVER_MAC_ADDRESS]
-                           ))
+                           connected_devices=db_actions.query_watched_devices())
 
 
 def loop_device_scan():
@@ -24,6 +22,11 @@ def loop_device_scan():
     while True:
         device_dict = telnet_scraper.get_devices(telnet_session)
         db_actions.process_device_dict(device_dict)
+        connected_devices = db_actions.query_connected_devices(ignore_device_list=[SERVER_MAC_ADDRESS])
+        connected_devices_dict = {}
+        for device in connected_devices:
+            connected_devices_dict[device.mac_address] = {"IP Address": device.ip_address,
+                                                          "Nickname": device.nickname}
         time.sleep(60)
 
 

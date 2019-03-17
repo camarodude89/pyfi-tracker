@@ -69,12 +69,15 @@ class DatabaseActions:
         self.session.commit()
         self.session.close()
 
-    def query_connected_devices(self, ignore_device_list=None):
+    def query_connected_devices(self, ignore_device_list=[]):
         if ignore_device_list:
             return self.session.query(Device).order_by(Device.nickname).filter(
                 Device.connected.is_(True), not_(Device.mac_address.in_(ignore_device_list))
             ).all()
         return self.session.query(Device).order_by(Device.nickname).filter(Device.connected.is_(True)).all()
+
+    def query_watched_devices(self):
+        return self.session.query(Device).order_by(Device.nickname).filter(Device.watched.is_(True)).all()
 
     def test(self):
         from telnet_scraper import start_telnet_session, get_devices
