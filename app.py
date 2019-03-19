@@ -4,8 +4,10 @@ from threading import Thread
 import time
 import telnet_scraper
 from actions import DatabaseActions
+import os
 
 SERVER_MAC_ADDRESS = '70:18:8b:ae:e3:6b'
+IMAGE_FOLDER = os.path.join('static', 'images')
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -13,8 +15,11 @@ db_actions = DatabaseActions()
 
 @app.route('/')
 def show_table():
+    green_led = os.path.join(IMAGE_FOLDER, 'green_led.jpg')
+    red_led = os.path.join(IMAGE_FOLDER, 'red_led.jpg')
     return render_template('index.html',
-                           connected_devices=db_actions.query_watched_devices())
+                           connected_devices=db_actions.query_watched_devices(),
+                           green_led=green_led, red_led=red_led)
 
 
 def loop_device_scan():

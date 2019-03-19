@@ -9,10 +9,6 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <style>
-        table, th, td {
-        border: 1px solid black;
-        border-collapse: collapse;
-        }
         th, td {
             padding: 5px;
         }
@@ -26,23 +22,33 @@
 <body>
     <h1 class="text-center">Py-Fi Tracker</h1>
     <div class="container">
-        <table style="width: 100%">
+        <table class="table table-hover">
+        <thead>
             <tr>
                 <th>Name</th>
                 <th>MAC Address</th>
-                <th>Connection Status</th>
             </tr>
+        </thead>
+        <tbody>
             {% for device in connected_devices %}
             <tr>
+                {% if device.connected %}
                 {% if device.nickname is none %}
-                <td>{{ device.hostname }}</td>
+                <td><img src="{{ green_led }}" alt="Green Light" style="height: 1em; width: 1em"> {{ device.hostname }}</td>
                 {% else %}
-                <td>{{ device.nickname }}</td>
+                <td><img src="{{ green_led }}" alt="Green Light" style="height: 1em; width: 1em"> {{ device.nickname }}</td>
+                {% endif %}
+                {% else %}
+                {% if device.nickname is none %}
+                <td><img src="{{ red_led }}" alt="Red Light" style="height: 1em; width: 1em"> {{ device.hostname }}</td>
+                {% else %}
+                <td><img src="{{ red_led }}" alt="Red Light" style="height: 1em; width: 1em"> {{ device.nickname }}</td>
+                {% endif %}
                 {% endif %}
                 <td>{{ device.mac_address }}</td>
-                <td>{{ device.connected }}</td>
             </tr>
             {% endfor %}
+        </tbody>
         </table>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
