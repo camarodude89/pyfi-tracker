@@ -22,34 +22,18 @@
 <body>
     <h1 class="text-center">Py-Fi Tracker</h1>
     <div class="container">
-        <table class="table table-hover">
+        <table class="table table-hover" id="device-table">
         <thead>
             <tr>
                 <th>Name</th>
                 <th>MAC Address</th>
             </tr>
         </thead>
-        <tbody>
-            {% for device in connected_devices %}
-            <tr>
-                {% if device.connected %}
-                {% if device.nickname is none %}
-                <td><img src="{{ green_led }}" alt="Green Light" style="height: 1em; width: 1em"> {{ device.hostname }}</td>
-                {% else %}
-                <td><img src="{{ green_led }}" alt="Green Light" style="height: 1em; width: 1em"> {{ device.nickname }}</td>
-                {% endif %}
-                {% else %}
-                {% if device.nickname is none %}
-                <td><img src="{{ red_led }}" alt="Red Light" style="height: 1em; width: 1em"> {{ device.hostname }}</td>
-                {% else %}
-                <td><img src="{{ red_led }}" alt="Red Light" style="height: 1em; width: 1em"> {{ device.nickname }}</td>
-                {% endif %}
-                {% endif %}
-                <td>{{ device.mac_address }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
+        <tbody></tbody>
         </table>
+    </div>
+    <div class="text-center" id="update-time">
+        Last Updated {{ current_time }}
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -60,5 +44,41 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        socket.on('connect', function() {
+            console.log('Websocket connected!');
+        });
+        socket.on('json', function(json) {
+            var obj = JSON.parse(json);
+            var rows = '';
+            obj.forEach(function (device) {
+                var row = '<tr>';
+                var macAddress = Object.keys(device)[0];
+                var connected = device[macAddress]['Connected'];
+                var nickname = device[macAddress]['Nickname'];
+
+                if (connected) {
+                    row += '<td><img src=' + '{{ green_led }}' +
+                            ' alt=\"Green Light\" style=\"height: 1em; width: 1em\"> ' +
+                            nickname + '</td>';
+                }
+                else {
+                    row += '<td><img src=' + '{{ red_led }}' +
+                            ' alt=\"Red Light\" style=\"height: 1em; width: 1em\"> ' +
+                            nickname + '</td>';
+                }
+
+                row += '<td>' + macAddress + '</td>';
+                rows += row + '/<tr>';
+            });
+            $('#device-table tbody').empty();
+            $('#device-table tbody').html(rows);
+        });
+        socket.on('update time', function(msg) {
+            document.getElementById('update-time').innerHTML = 'Last Updated ' + msg;
+        });
+    </script>
 </body>
 </html>
