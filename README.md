@@ -19,6 +19,5 @@ changes that said otherwise. A BusyBox session is then initiated, which allows a
 device_list file. This file is updated by the modem every 4 to 5 minutes, so device connection status
 is accurate to within 4 to 5 minutes. Once the file is retrieved, it is parsed into a Python
 dictionary and then entered into a containerized PostgreSQL database. During the processing of the
-dictionary, a notification is built to be sent through PushBullet to the specified device from the
-API key provided. Connect and disconnect times are also recorded in the database for future reporting
-and inferring of data. Currently displays a static table of connected devices using Flask back-end.
+dictionary, a notification is built to be sent through PushBullet. Connect and disconnect times are also recorded in the database for future reporting
+and inferring of data. A table of watched devices is displayed via a Flask back-end and updated through Socketio.
