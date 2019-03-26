@@ -78,8 +78,3 @@ class DatabaseActions:
 
     def query_watched_devices(self):
         return self.session.query(Device).order_by(Device.nickname).filter(Device.watched.is_(True)).all()
-
-    def test(self):
-        from telnet_scraper import start_telnet_session, get_devices
-        device_dict = get_devices(start_telnet_session())
-        self.process_device_dict(device_dict)

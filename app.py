@@ -19,7 +19,6 @@ db_actions = DatabaseActions()
 def show_table():
     green_led = os.path.join(IMAGE_FOLDER, 'green_led.jpg')
     red_led = os.path.join(IMAGE_FOLDER, 'red_led.jpg')
-    current_time = datetime.now().strftime('%I:%M %p, %A, %x')
     return render_template('index.html', green_led=green_led, red_led=red_led)
 
 
@@ -29,7 +28,6 @@ def loop_device_scan():
         device_dict = telnet_scraper.get_devices(telnet_session)
         db_actions.process_device_dict(device_dict)
         send_update()
-        #send_update_test()
         time.sleep(60)
 
 
@@ -47,40 +45,6 @@ def send_update():
     update_time = datetime.now()
 
     # Formatting example 09:42PM, Tuesday, 03/19/19
-    socketio.emit('update time', update_time.strftime('%I:%M %p, %A, %x'))
-
-def send_update_test():
-    watched_devices = db_actions.query_watched_devices()
-    watched_devices_list = []
-
-    for device in watched_devices:
-        device_details_dict = {'Connected': False, 'Nickname': device.nickname}
-        watched_devices_list.append({device.mac_address: device_details_dict})
-
-    socketio.emit('json', json.dumps(watched_devices_list))
-    socketio.emit('update time', 'All disconnected!!!')
-
-    watched_devices_list.clear()
-
-    time.sleep(5)
-
-    for device in watched_devices:
-        device_details_dict = {'Connected': True, 'Nickname': device.nickname}
-        watched_devices_list.append({device.mac_address: device_details_dict})
-
-    socketio.emit('json', json.dumps(watched_devices_list))
-    socketio.emit('update time', 'All connected!!!')
-
-    time.sleep(5)
-
-    watched_devices_list.clear()
-
-    for device in watched_devices:
-        device_details_dict = {'Connected': device.connected, 'Nickname': device.nickname}
-        watched_devices_list.append({device.mac_address: device_details_dict})
-
-    update_time = datetime.now()
-    socketio.emit('json', json.dumps(watched_devices_list))
     socketio.emit('update time', update_time.strftime('%I:%M %p, %A, %x'))
 
 

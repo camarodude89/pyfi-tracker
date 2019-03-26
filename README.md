@@ -22,8 +22,3 @@ dictionary and then entered into a containerized PostgreSQL database. During the
 dictionary, a notification is built to be sent through PushBullet to the specified device from the
 API key provided. Connect and disconnect times are also recorded in the database for future reporting
 and inferring of data. Currently displays a static table of connected devices using Flask back-end.
-
-## Planned Features
-
-* Customization of notifications, perhaps grouping of devices by owner
-* Dynamic webpage showing most recent device connection statuses (looking at Bootstrap and AJAX)
