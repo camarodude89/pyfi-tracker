@@ -73,7 +73,6 @@
                 row += '<td>' + macAddress + '</td>';
                 rows += row + '/<tr>';
             });
-            $('#device-table tbody').empty();
             $('#device-table tbody').html(rows);
         });
         socket.on('update time', function(msg) {
