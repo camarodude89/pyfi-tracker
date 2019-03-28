@@ -50,7 +50,7 @@ class DeviceOwner(Base):
     mac_address = Column(String, primary_key=True)
     owner = Column(String)
 
-    def __index__(self, mac_address, owner):
+    def __init__(self, mac_address, owner):
         self.mac_address = mac_address
         self.owner = owner
 
